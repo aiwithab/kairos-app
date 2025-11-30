@@ -1,3 +1,5 @@
+import kotlin.text.toInt
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -26,6 +28,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        buildFeatures {
+            compose = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -34,6 +40,8 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+
     buildFeatures {
         compose = true
     }
@@ -56,4 +64,16 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(libs.androidx.compose.material3.v140)
+    implementation(libs.androidx.compose.material3.window.size.class1)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.moshi)
+
+// Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+
 }
