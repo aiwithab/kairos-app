@@ -78,10 +78,10 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     // Navigation Compose
-    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation(libs.androidx.navigation.compose)
     
     // ViewModel Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
 }
