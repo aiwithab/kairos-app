@@ -67,13 +67,21 @@ dependencies {
     implementation(libs.androidx.compose.material3.v140)
     implementation(libs.androidx.compose.material3.window.size.class1)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+    
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
 
-// Coroutines
+    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+    
+    // ViewModel Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 
 }

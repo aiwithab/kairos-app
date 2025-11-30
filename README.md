@@ -13,11 +13,30 @@ An Android application that generates personalized interview preparation plans u
 
 ## 🏗️ Architecture
 
+This project follows **Clean Architecture** principles with a modular **MVVM (Model-View-ViewModel)** pattern, ensuring separation of concerns, testability, and scalability.
+
+### Architecture Layers
+
+```
+┌─────────────────────────────────────────┐
+│         Presentation Layer              │
+│  (UI, ViewModels, Navigation)           │
+├─────────────────────────────────────────┤
+│          Domain Layer                   │
+│  (Use Cases, Business Logic)            │
+├─────────────────────────────────────────┤
+│           Data Layer                    │
+│  (Repository, API, Models)              │
+└─────────────────────────────────────────┘
+```
+
 ### Tech Stack
 
 - **Language**: Kotlin
 - **UI Framework**: Jetpack Compose
-- **Architecture**: MVVM (Model-View-ViewModel)
+- **Architecture Pattern**: MVVM + Clean Architecture
+- **Navigation**: Navigation Compose
+- **State Management**: StateFlow & Compose State
 - **Networking**: Retrofit 2 + OkHttp3
 - **Serialization**: Gson
 - **Async Operations**: Kotlin Coroutines
@@ -27,42 +46,88 @@ An Android application that generates personalized interview preparation plans u
 ### Project Structure
 
 ```
-kairos-app/
-├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/aiwithab/kairos/
-│   │   │   │   ├── MainActivity.kt          # Main entry point and UI components
-│   │   │   │   └── ui/theme/                # Theme configuration
-│   │   │   ├── res/                         # Resources (layouts, strings, etc.)
-│   │   │   └── AndroidManifest.xml
-│   │   └── test/                            # Unit tests
-│   └── build.gradle.kts                     # App-level build configuration
-├── build.gradle.kts                         # Project-level build configuration
-├── settings.gradle.kts                      # Project settings
-└── gradle.properties                        # Gradle properties
+com.aiwithab.kairos/
+├── data/                                    # Data Layer
+│   ├── model/
+│   │   ├── request/
+│   │   │   └── PlanRequest.kt              # API request models
+│   │   └── response/
+│   │       ├── PlanResponse.kt             # API response models
+│   │       ├── Skill.kt
+│   │       └── Topic.kt
+│   ├── remote/
+│   │   ├── ApiService.kt                   # Retrofit API interface
+│   │   └── NetworkModule.kt                # Network configuration
+│   └── repository/
+│       └── PlanRepositoryImpl.kt           # Repository implementation
+│
+├── domain/                                  # Domain Layer
+│   ├── model/
+│   │   ├── PlanDomain.kt                   # Domain models (UI-agnostic)
+│   │   ├── SkillDomain.kt
+│   │   └── TopicDomain.kt
+│   ├── repository/
+│   │   └── PlanRepository.kt               # Repository interface
+│   └── usecase/
+│       └── GeneratePlanUseCase.kt          # Business logic
+│
+├── presentation/                            # Presentation Layer
+│   ├── input/
+│   │   ├── InputScreen.kt                  # Input UI screen
+│   │   ├── InputViewModel.kt               # Input screen ViewModel
+│   │   └── InputUiState.kt                 # Input screen state
+│   ├── output/
+│   │   ├── OutputScreen.kt                 # Output UI screen
+│   │   ├── OutputViewModel.kt              # Output screen ViewModel
+│   │   └── OutputUiState.kt                # Output screen state
+│   ├── components/
+│   │   ├── TopicCard.kt                    # Reusable UI components
+│   │   ├── ProgressHeader.kt
+│   │   └── LoadingIndicator.kt
+│   └── navigation/
+│       └── NavGraph.kt                     # Navigation setup
+│
+├── ui/theme/                                # Theme configuration
+│   ├── Color.kt
+│   ├── Theme.kt
+│   └── Type.kt
+│
+├── util/                                    # Utilities
+│   ├── Constants.kt                        # App constants
+│   ├── Result.kt                           # Result wrapper
+│   └── Extensions.kt                       # Extension functions
+│
+└── MainActivity.kt                          # App entry point
 ```
 
 ### Key Components
 
-#### Data Models
-- **PlanRequest**: Request payload for career plan generation
-- **PlanResponse**: Response containing skills and topics
-- **Skill**: Individual skill with associated topics and timeline
-- **Topic**: Specific learning topic with study materials, timeline, priority, and bonus flag
+#### Data Layer
+- **Models**: DTOs for API communication with proper serialization
+- **ApiService**: Retrofit interface defining API endpoints
+- **NetworkModule**: Singleton providing configured Retrofit and OkHttp instances
+- **PlanRepositoryImpl**: Implements repository pattern, handles API calls and data-to-domain mapping
 
-#### API Integration
-- **ApiService**: Retrofit interface for backend communication
-- **ApiClient**: Singleton object managing Retrofit instance
-- Base URL configured for local development (update for production)
+#### Domain Layer
+- **Domain Models**: Business entities with computed properties and helper methods
+- **PlanRepository**: Interface defining data operations (dependency inversion)
+- **GeneratePlanUseCase**: Encapsulates business logic, input validation, and orchestrates repository calls
 
-#### ViewModel
-- **PlanViewModel**: Manages UI state, loading states, and error handling
-- Uses Kotlin Coroutines for asynchronous API calls
+#### Presentation Layer
+- **ViewModels**: Manage UI state using StateFlow, handle user interactions
+- **UI States**: Sealed classes representing different screen states (Idle, Loading, Success, Error)
+- **Screens**: Composable functions for UI rendering
+- **Components**: Reusable UI elements (TopicCard, ProgressHeader, LoadingIndicator)
+- **Navigation**: NavGraph manages screen navigation and dependency injection
 
-#### UI Screens
-- **InputScreen**: Form for entering category, job description, and timeline
-- **OutputScreen**: Displays generated plan with progress tracking
+### Design Principles
+
+✅ **Separation of Concerns**: Each layer has a single, well-defined responsibility  
+✅ **Dependency Inversion**: Layers depend on abstractions, not implementations  
+✅ **Single Responsibility**: Each class has one reason to change  
+✅ **Testability**: Business logic isolated from Android framework  
+✅ **Scalability**: Easy to add new features without modifying existing code  
+✅ **Maintainability**: Clear structure makes code easy to understand and modify
 
 ## 🚀 Getting Started
 
@@ -144,6 +209,13 @@ Adjust these values based on your backend response times.
 - `com.squareup.retrofit2:converter-gson` - Gson converter for Retrofit
 - `com.squareup.retrofit2:converter-moshi` - Moshi converter (alternative)
 - `com.squareup.okhttp3:logging-interceptor` - HTTP logging
+
+### Navigation
+- `androidx.navigation:navigation-compose` - Navigation Compose for screen routing
+
+### ViewModel
+- `androidx.lifecycle:lifecycle-viewmodel-compose` - ViewModel integration with Compose
+- `androidx.lifecycle:lifecycle-runtime-compose` - Lifecycle runtime for Compose
 
 ### Coroutines
 - `org.jetbrains.kotlinx:kotlinx-coroutines-android` - Coroutines for Android
@@ -267,16 +339,24 @@ This project follows the official Kotlin coding conventions:
 
 ## 🚧 Future Enhancements
 
+### Features
 - [ ] User authentication and profile management
-- [ ] Offline mode with local caching
+- [ ] Offline mode with local caching (Room database)
 - [ ] Calendar integration for scheduling study sessions
 - [ ] Reminders and notifications
 - [ ] Study material recommendations with links
 - [ ] Progress analytics and insights
-- [ ] Dark mode support
-- [ ] Multi-language support
 - [ ] Export plan as PDF
 - [ ] Social sharing features
+
+### Architecture Improvements
+- [ ] Dependency Injection with Hilt/Koin
+- [ ] Multi-module architecture (app, data, domain, presentation)
+- [ ] Comprehensive unit and integration tests
+- [ ] UI tests with Compose Testing
+- [ ] CI/CD pipeline setup
+- [ ] ProGuard/R8 optimization for release builds
+- [ ] BuildConfig variants for dev/staging/prod environments
 
 ## 📄 License
 
